@@ -1,0 +1,1 @@
+npm install express forever serve-favicon morgan cookie-parser body-parser ejs http-proxy-middleware --save-dev -g
