@@ -8,7 +8,9 @@
   },
   "scripts": {
     "start": "webpack-dev-server --env=dev --hot --open",
-    "build": "webpack --env=prod --hide-modules"
+    "build": "webpack --env=prod --hide-modules",
+    "create:app": "node ./tools/create-app",
+    "create:component": "node ./tools/create-component"
   },
   "repository": {
     "type": "git",

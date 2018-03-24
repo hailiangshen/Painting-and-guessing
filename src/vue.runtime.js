@@ -1,11 +1,13 @@
 import "babel-polyfill";
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import axios from 'axios';
+import Vuex from 'vuex';
+// import axios from 'axios';
 import App from './app.vue';
 import 'src/share/static.css'; // 全局样式的引入方式
 
 Vue.use(VueRouter);
+Vue.use(Vuex);
 
 /**
  * scrollBehavior:

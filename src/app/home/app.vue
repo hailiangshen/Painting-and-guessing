@@ -9,16 +9,28 @@
             <img :src="profilePicture" :class="$style.profilePicture" title="Profile Picture">
             <div :class="$style.nickName">{{nickName}}</div>
         </div>
+        <div>
+            <i-button :buttons="startBtns" v-on:click="startClick"></i-button>
+        </div>
     </div>
 </template>
 
 <script>
-import { TextToImageUrl } from "src/libs/common.js";
+import { TextToImageUrl } from 'src/libs/common.js';
+import iButton from 'src/components/i-button/component';
 
 export default {
     data: function() {
         return {
-            nickName: "小明"
+            nickName: "小明",
+            startBtns: [
+                {
+                    name: '起飞',
+                    onClick: function() {
+                        alert('飞！');
+                    }
+                }
+            ]
         };
     },
     computed: {
@@ -26,7 +38,14 @@ export default {
             return TextToImageUrl(this.nickName);
         }
     },
-    methods: {}
+    methods: {
+        startClick: function(btn) {
+            btn && btn.onClick && btn.onClick();
+        }
+    },
+    components: {
+        iButton
+    }
 };
 </script>
 
