@@ -1,1 +1,3 @@
 npm install express forever serve-favicon morgan cookie-parser body-parser ejs http-proxy-middleware --save-dev -g
+
+npm install webpack@3.11.0 webpack-dev-server@2.11.1 -g
