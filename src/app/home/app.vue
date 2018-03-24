@@ -27,7 +27,9 @@ export default {
                 {
                     name: '起飞',
                     onClick: function() {
-                        alert('飞！');
+                        this.$router.push({
+                            path: '/painting'
+                        });
                     }
                 }
             ]
@@ -40,7 +42,7 @@ export default {
     },
     methods: {
         startClick: function(btn) {
-            btn && btn.onClick && btn.onClick();
+            btn && btn.onClick && btn.onClick.call(this);
         }
     },
     components: {

@@ -21,7 +21,7 @@ export default {
     computed: {
         itemStyles: function() {
             return {
-                width: `${1 / this.buttons.length * 100}%`
+                width: `${1/this.buttons.length*100}%`
             };
         }
     },

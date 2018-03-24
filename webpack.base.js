@@ -12,22 +12,26 @@ const moment = require("moment");
 const opn = require("opn");
 const chalk = require("chalk");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const bundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 let loadEntry = (appDir) => {
     // let appDir = path.resolve('./src/app');
-    let entry = {};
+    let entry = [];
     fs.readdirSync(appDir).map(subDir => {
         let apps = fs.readdirSync(path.join(appDir, subDir)).filter(file => /^[\s\S]+.route.js$/.test(file)).map(file => path.join(appDir, subDir, file));
         if(apps.length) {
-            entry[subDir] = apps;
+            entry = entry.concat(apps);
         }
     });
 
-    return entry;
+    return {
+        app: entry
+    };
 }
 
 module.exports = (options = {}) => {
     let entry = loadEntry(path.resolve('./src/app'));
+    
     let res = {
         entry,
         output : {
@@ -61,7 +65,8 @@ module.exports = (options = {}) => {
                     use: [{
                         loader: 'babel-loader',
                         options: {
-                            presets: ["env"]
+                            presets: ["env"],
+                            plugins: ['syntax-dynamic-import']
                         }
                     }]
                 },
@@ -99,14 +104,14 @@ module.exports = (options = {}) => {
             ]
         },
         plugins: [
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'common',
-                minChunks: (module, count) => count >= 2
-            }),
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'vendor',
-                minChunks: (module) => module.context && module.context.indexOf('node_modules') !== -1
-            }),
+            // new webpack.optimize.CommonsChunkPlugin({
+            //     name: 'common',
+            //     minChunks: (module, count) => count >= 2
+            // }),
+            // new webpack.optimize.CommonsChunkPlugin({
+            //     name: 'vendor',
+            //     minChunks: (module) => module.context && module.context.indexOf('node_modules') !== -1
+            // }),
             // new webpack.optimize.CommonsChunkPlugin({
             //     name: 'manifest',
             //     minChunks: Infinity
@@ -134,6 +139,15 @@ module.exports = (options = {}) => {
             new webpack.ProvidePlugin({
                 _: 'lodash'
             }),
+            new CleanWebpackPlugin(
+                [options.path],
+                {
+                    root: __dirname,  //根目录
+                    verbose: true,    //开启在控制台输出信息
+                    dry: false,       //启用删除文件
+                    beforeEmit: true
+                }
+            ),
             function () {
                 this.plugin("done", function (stats) {
                     setTimeout(() => {
@@ -176,10 +190,10 @@ module.exports = (options = {}) => {
     }
 
     if(!options.devServer) {
-        // res.plugins.push(new bundleAnalyzerPlugin({
-        //     analyzerMode: 'static', //server
-        //     analyzerPort: 4000
-        // }));
+        res.plugins.push(new bundleAnalyzerPlugin({
+            analyzerMode: 'static', //server
+            analyzerPort: 4000
+        }));
 
         // res.plugins.push(new PrerenderSpaPlugin(
         //     path.resolve(__dirname, './dist'),

@@ -1,7 +1,7 @@
 
 <template>
 <div>
-
+    <router-link to="/">painting!</router-link>
 </div>
 </template>
 
