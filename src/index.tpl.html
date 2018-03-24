@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta content="telephone=no" name="format-detection">
+    <title>Painting and guessing</title>
+    
+</head>
+<body>
+    <div id="root" class="lds-css">
+        <style type="text/css">
+            @keyframes lds-blocks {
+                0% {
+                    background: #f47e60;
+                }
+                12.5% {
+                    background: #f47e60;
+                }
+                12.625% {
+                    background: #e15b64;
+                }
+                100% {
+                    background: #e15b64;
+                }
+            }
+            @-webkit-keyframes lds-blocks {
+                0% {
+                    background: #f47e60;
+                }
+                12.5% {
+                    background: #f47e60;
+                }
+                12.625% {
+                    background: #e15b64;
+                }
+                100% {
+                    background: #e15b64;
+                }
+            }
+            .lds-css{
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+            .lds-mask{
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-color: #000;
+                opacity: .2;
+            }
+            .lds-blocks {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 200px !important;
+                height: 200px !important;
+                margin: -100px 0 0 -100px;
+                -webkit-transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+                transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+            }
+            .lds-blocks div {
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                background: #e15b64;
+                -webkit-animation: lds-blocks 1s linear infinite;
+                animation: lds-blocks 1s linear infinite;
+            }
+        </style>
+        <div class="lds-mask"></div>
+        <div class="lds-blocks">
+            <div style="left:38px;top:38px;animation-delay:0s"></div>
+            <div style="left:80px;top:38px;animation-delay:0.125s"></div>
+            <div style="left:122px;top:38px;animation-delay:0.25s"></div>
+            <div style="left:38px;top:80px;animation-delay:0.875s"></div>
+            <div style="left:122px;top:80px;animation-delay:0.375s"></div>
+            <div style="left:38px;top:122px;animation-delay:0.75s"></div>
+            <div style="left:80px;top:122px;animation-delay:0.625s"></div>
+            <div style="left:122px;top:122px;animation-delay:0.5s"></div>
+        </div>
+    </div>
+</body>
+</html>

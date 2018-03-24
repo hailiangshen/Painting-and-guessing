@@ -1,0 +1,37 @@
+{
+  "name": "painting-and-guessing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "www": "node ./server/bin/www --PORT=8888 "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hailiangshen/Painting-and-guessing.git"
+  },
+  "author": "hl",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hailiangshen/Painting-and-guessing/issues"
+  },
+  "homepage": "https://github.com/hailiangshen/Painting-and-guessing#readme",
+  "devDependencies": {    
+    "body-parser": "^1.18.2",
+    "chalk": "^2.3.2",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.7",
+    "express": "^4.16.3",
+    "http-proxy-middleware": "^0.18.0",
+    "morgan": "^1.9.0",
+    "opn": "^5.3.0",
+    "serve-favicon": "^2.4.5"    
+  },
+  "dependencies": {
+    "loadash": "^1.0.0",
+    "moment": "^2.21.0"
+  }
+}
