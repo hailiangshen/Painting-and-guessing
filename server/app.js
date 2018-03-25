@@ -34,7 +34,7 @@ app.use(express.static(publicDir, {
 
 // app.all('/api/*', require('./routes/proxy.js'));
 
-app.all('*', function (req, res) {
+app.all('((?!/socket.io/).)*', function (req, res) {
     res.sendFile('index.html', {
         root: publicDir
     });
