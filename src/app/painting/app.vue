@@ -67,8 +67,7 @@ export default {
         }
     },
     mounted: function() {
-        this.painterConfigs.width = document.body.clientWidth;
-        this.painterConfigs.height = document.body.clientHeight;
+        this.painterConfigs.width = this.painterConfigs.height = document.body.clientWidth;
     },
     components: {
         roomHead,
