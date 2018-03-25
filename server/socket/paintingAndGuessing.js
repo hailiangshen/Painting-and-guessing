@@ -95,19 +95,13 @@ let getRoom = roomId => {
 
 // 所有需要给前端的room数据都有过滤一次
 let filterRoom = (rooms) => {
-    if(rooms instanceof Array) {
-        return rooms.map(x => {
-            return {
-                id: x.id,
-                name: x.name
-            };
-        });
-    } else {
+    return ((rooms instanceof Array) ? rooms : [rooms]).map(x => {
         return {
-            id: rooms.id,
-            name: rooms.name
+            id: x.id,
+            name: x.name,
+            users: x.users.map(u => u.id)
         };
-    }    
+    })   
 }
 
 // 这俩对象应该闭包包起来
@@ -115,8 +109,8 @@ let userCache = {},
     roomsCache = [new Room("asdasdasd", "哎呀一个房间")];
 
 let socketHanlder = socket => {
-    let token = socket.handshake.query.token || socket.id;
-    let nickName = socket.handshake.query.nickName || null;
+    let token = socket.handshake.query.id || socket.id;
+    let nickName = socket.handshake.query.nickName || undefined;
     console.log(token);
 
     let user = userCache[token]
@@ -126,13 +120,15 @@ let socketHanlder = socket => {
 
     socket.emit(socketMethods.updateUser, {
         data: {
-            token,
-            nickName
+            id: user.id,
+            nickName: user.nickName
         }
     });
 
-    socket.emit(socketMethods.getCurrentRoom, {
-        data: user.roomId ? filterRoom(getRoom(user.roomId)) : null
+    socket.on(socketMethods.getCurrentRoom, () => {
+        socket.emit(socketMethods.getCurrentRoom, {
+            data: user.roomId ? filterRoom(getRoom(user.roomId))[0] : null
+        });
     });
 
     socket.on(socketMethods.getRooms, page => {

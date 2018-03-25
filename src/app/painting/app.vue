@@ -1,8 +1,8 @@
 
 <template>
-<div>
+<div v-if="currentRoom">
     <room-head :title="currentRoom.name"></room-head>
-    <div :class="$style.painterContainer" ref="painterContainer">
+    <div :class="$style.painterContainer">
         <canvas-paint :width="painterConfigs.width" :height="painterConfigs.height" :color="painterConfigs.color" :line-width="painterConfigs.lineWidth" ref="painter"></canvas-paint>
     </div>
     <div :class="[commonStyles.clearFix, $style.operationPanel]">
@@ -28,6 +28,10 @@ import lineWidthSelecter from "src/components/line-width-selecter/component";
 import commonStyles from 'src/share/style';
 
 export default {
+    beforeRouteEnter: (to, from, next) => {
+        // ...
+        next();
+    },
     data: function() {
         return {
             commonStyles,
@@ -63,9 +67,8 @@ export default {
         }
     },
     mounted: function() {
-        let size = this.$refs.painterContainer.getBoundingClientRect();
-        this.painterConfigs.width = size.width;
-        this.painterConfigs.height = size.height;
+        this.painterConfigs.width = document.body.clientWidth;
+        this.painterConfigs.height = document.body.clientHeight;
     },
     components: {
         roomHead,

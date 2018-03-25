@@ -6,11 +6,17 @@
             <div :class="$style.nickName">{{nickName}}</div>
         </div>
         <div :class="$style.currentRoom" v-if="currentRoom">
-            <div>{{currentRoom.name}}</div>
+            <div :class="[commonStyles.clearFix, $style.room]">
+                <span :class="[$style.roomLab, commonStyles.fl]">{{currentRoom.name}}</span>
+                <span :class="[$style.roomLab, commonStyles.fr]">{{currentRoom.users.length}}只瓜娃子</span>
+            </div>
             <i-button :buttons="startBtns" v-on:click="startClick"></i-button>
         </div>
         <div :class="$style.roomList" v-if="!currentRoom">
-            <div v-for="(room, index) in roomList" :key="index" v-on:click="selectRoom(room)">{{room.name}}</div>
+            <div v-for="(room, index) in roomList" :key="index" v-on:click="selectRoom(room)" :class="[commonStyles.clearFix, $style.room]">
+                <span :class="[$style.roomLab, commonStyles.fl]">{{room.name}}({{room.users.length}}只瓜娃子)</span>
+                <span :class="[$style.roomLab, commonStyles.fr]">赶紧加入</span>
+            </div>
         </div>
         <div>
         </div>
@@ -21,11 +27,12 @@
 import { TextToImageUrl } from 'src/libs/common.js';
 import iButton from 'src/components/i-button/component';
 import roomHead from 'src/components/room-head/component';
+import commonStyles from 'src/share/style';
 
 export default {
     data: function() {
         return {
-            // nickName: "小明",
+            commonStyles,
             startBtns: [
                 {
                     name: '看什么看，赶紧起飞！',
@@ -85,10 +92,21 @@ export default {
     padding: 10px;
     font-size: 1.2em;
 }
+.room{
+    background-color: rgb(2, 120, 215);
+    width: 100%;
+    padding: 0 10px;
+}
+.roomLab{
+    height: 2rem;
+    font-size: 1.2em;
+    line-height: 2rem;
+    color: #fff;
+}
 .currentRoom{
-
+    margin-top: 10px;
 }
 .roomList{
-
+    margin-top: 10px;
 }
 </style>
