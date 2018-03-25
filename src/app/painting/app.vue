@@ -1,7 +1,7 @@
 
 <template>
 <div>
-    <room-head title="房间001"></room-head>
+    <room-head :title="currentRoom.name"></room-head>
     <div :class="$style.painterContainer" ref="painterContainer">
         <canvas-paint :width="painterConfigs.width" :height="painterConfigs.height" :color="painterConfigs.color" :line-width="painterConfigs.lineWidth" ref="painter"></canvas-paint>
     </div>
@@ -40,6 +40,9 @@ export default {
         };
     },
     computed: {
+        currentRoom: function() {
+            return this.$store.state.currentRoom;
+        },
         btnColorStyle: function() {
             return {
                 color: this.painterConfigs.color

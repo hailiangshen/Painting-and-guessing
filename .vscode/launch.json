@@ -12,6 +12,15 @@
             "args": [
                 "test-app"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "www",
+            "program": "${workspaceFolder}\\server\\bin\\www.js",
+            "args": [
+                
+            ]
         }
     ]
 }

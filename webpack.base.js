@@ -196,6 +196,10 @@ module.exports = (options = {}) => {
                     pathRewrite: {'^/api': '/api'},
                     changeOrigin: true,
                 },
+                '/socket.io/*': {
+                    target: 'http://localhost',
+                    changeOrigin: true,
+                }
             },
         }
     }
@@ -216,7 +220,7 @@ module.exports = (options = {}) => {
         res.plugins.push(new webpack.optimize.UglifyJsPlugin({
             minimize: true,
             compress: {
-                drop_console: true,
+                // drop_console: true,
                 drop_debugger: true,
                 warnings: false
             },

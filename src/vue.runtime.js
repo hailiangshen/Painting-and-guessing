@@ -1,13 +1,16 @@
 import "babel-polyfill";
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Vuex from 'vuex';
+import Socket from './socket';
+
 // import axios from 'axios';
 import App from './app.vue';
 import 'src/share/static.css'; // 全局样式的引入方式
+import store from './store';
+
 
 Vue.use(VueRouter);
-Vue.use(Vuex);
+Vue.use(Socket);
 
 /**
  * scrollBehavior:
@@ -50,7 +53,8 @@ const vueRouter = new VueRouter({
 
 const vue = new Vue({
     render: h => h(App),
-    router: vueRouter
+    router: vueRouter,
+    store
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -66,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     vue.$mount('#root');
+    console.log('root mounted');
 });
 
 

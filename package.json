@@ -7,6 +7,7 @@
     "doc": "doc"
   },
   "scripts": {
+    "www": "node ./server/bin/www",
     "start": "webpack-dev-server --env=dev --hot --open",
     "build": "webpack --env=prod --hide-modules",
     "create:app": "node ./tools/create-app",
@@ -44,6 +45,7 @@
     "morgan": "^1.9.0",
     "opn": "^5.3.0",
     "serve-favicon": "^2.4.5",
+    "socket.io": "^2.0.4",
     "style-loader": "^0.20.3",
     "url-loader": "^1.0.1",
     "vue-loader": "^14.2.1",
@@ -58,6 +60,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "loadash": "^1.0.0",
+    "lodash": "^4.17.5",
     "moment": "^2.21.0",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",

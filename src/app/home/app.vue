@@ -2,11 +2,17 @@
     <div>
         <room-head></room-head>
         <div :class="$style.userBox">
-            <img :src="profilePicture" :class="$style.profilePicture" title="Profile Picture">
+            <img v-show="profilePicture" :src="profilePicture" :class="$style.profilePicture" title="Profile Picture">
             <div :class="$style.nickName">{{nickName}}</div>
         </div>
-        <div>
+        <div :class="$style.currentRoom" v-if="currentRoom">
+            <div>{{currentRoom.name}}</div>
             <i-button :buttons="startBtns" v-on:click="startClick"></i-button>
+        </div>
+        <div :class="$style.roomList" v-if="!currentRoom">
+            <div v-for="(room, index) in roomList" :key="index" v-on:click="selectRoom(room)">{{room.name}}</div>
+        </div>
+        <div>
         </div>
     </div>
 </template>
@@ -19,10 +25,10 @@ import roomHead from 'src/components/room-head/component';
 export default {
     data: function() {
         return {
-            nickName: "小明",
+            // nickName: "小明",
             startBtns: [
                 {
-                    name: '起飞',
+                    name: '看什么看，赶紧起飞！',
                     onClick: function() {
                         this.$router.push({
                             path: '/painting'
@@ -33,13 +39,26 @@ export default {
         };
     },
     computed: {
+        currentRoom: function() {
+            return this.$store.state.currentRoom;
+        },
+        nickName: function() {
+            return this.$store.state.currentUser ? this.$store.state.currentUser.nickName: '';
+        },
         profilePicture: function() {
             return TextToImageUrl(this.nickName);
+        },
+        roomList: function() {
+            return this.$store.state.rooms;
         }
     },
     methods: {
         startClick: function(btn) {
             btn && btn.onClick && btn.onClick.call(this);
+        },
+        selectRoom: function(room) {
+            this.$socket.enterRoom(room);
+            this.$store.commit('setRoom', room);
         }
     },
     components: {
@@ -65,5 +84,11 @@ export default {
 .nickName{
     padding: 10px;
     font-size: 1.2em;
+}
+.currentRoom{
+
+}
+.roomList{
+
 }
 </style>
