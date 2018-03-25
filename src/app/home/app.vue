@@ -1,10 +1,6 @@
 <template>
     <div>
-        <div :class="[$style.topBar, $style.container]">
-            <div :class="$style.grid">aaa</div>
-            <div :class="$style.grid">你画我猜</div>
-            <div :class="$style.grid">bbb</div>
-        </div>
+        <room-head></room-head>
         <div :class="$style.userBox">
             <img :src="profilePicture" :class="$style.profilePicture" title="Profile Picture">
             <div :class="$style.nickName">{{nickName}}</div>
@@ -18,6 +14,7 @@
 <script>
 import { TextToImageUrl } from 'src/libs/common.js';
 import iButton from 'src/components/i-button/component';
+import roomHead from 'src/components/room-head/component';
 
 export default {
     data: function() {
@@ -46,31 +43,19 @@ export default {
         }
     },
     components: {
-        iButton
+        iButton,
+        roomHead
     }
 };
 </script>
 
 <style module>
-.topBar {
-    height: 1.5rem;
-    font-size: 0.8rem;
-    color: #fff;
-    font-weight: 100;
-    background-color: rgb(53, 129, 255);
-}
-.container {
-    display: grid;
-    grid-template-columns: 0.33fr 0.34fr 0.33fr;
-}
-.grid {
-    line-height: 1.5rem;
-}
 .userBox{
+    margin-top: 10px;
     padding: 50px 0 10px 0;
-    /* background-size: 40px 40px;
-    background-image: linear-gradient(45deg,#ffbb3346 50%, transparent 0); */
-    
+    background-color: rgb(48,205,154);
+    background-size: 40px 40px;
+    background-image: linear-gradient(45deg,rgb(80,212,169) 25%, transparent 0, transparent 50%, rgb(80,212,169) 0,rgb(80,212,169) 75%, transparent 0);
 }
 .profilePicture{
     width: 4rem;

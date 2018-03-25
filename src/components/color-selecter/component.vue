@@ -2,9 +2,9 @@
 <template>
 <div>
     <div :class="$style.currentColor" :style="{'background-color': currentColor}" v-on:click="toggleColorBox(true)"></div>
-    <div :class="$style.mask" v-show="active" v-on:click="toggleColorBox(false)"></div>
+    <div :class="[$style.mask, active && $style.active]" v-show="active" v-on:click="toggleColorBox(false)" v-on:touchstart.stop></div>
     <div :class="[commonStyles.clearFix, $style.colorBox, active && $style.active]">
-        <div v-for="color in colorArray" :class="$style.color" v-on:click="colorClick(color)" :style="{'background-color': color}"></div>
+        <div v-for="color in colorArray" :class="$style.color" v-on:click="colorSelecte(color)" :style="{'background-color': color}"></div>
     </div>
 </div>
 </template>
@@ -13,6 +13,7 @@
 import commonStyles from "src/share/style";
 export default {
     props: {
+        // 如不传则会默认颜色数组中第一个并触发一次颜色改变事件
         color: {
             type: String
         },
@@ -48,14 +49,18 @@ export default {
         toggleColorBox: function(active = null) {
             this.active = active === null ? !this.active : active;
         },
-        colorClick: function(color) {
+        colorSelecte: function(color) {
             this.currentColor = color;
             this.$emit("colorChanged", color);
             this.toggleColorBox(false);
         }
     },
     mounted: function() {
-        this.currentColor = this.color || this.colorArray[0];
+        if(this.color){
+            this.currentColor = this.color;
+        } else {
+            this.colorSelecte(this.colorArray[0]);
+        }
     },
     components: {}
 };
@@ -67,7 +72,6 @@ export default {
     height: 1.5rem;
     border-radius: 1.5rem;
     margin: 0 auto;
-    transition: all .2s ease-in-out;
 }
 .mask{
     position: fixed;
@@ -75,6 +79,11 @@ export default {
     right: 0;
     top: 0;
     bottom: 0;
+    transition: all .2s ease-out;
+    background-color: rgba(0,0,0,0);
+}
+.mask.active{
+    background-color: rgba(0,0,0,.2);
 }
 .colorBox {
     position: fixed;

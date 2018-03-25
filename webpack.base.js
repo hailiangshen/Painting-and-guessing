@@ -16,17 +16,28 @@ const bundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 let loadEntry = (appDir) => {
     // let appDir = path.resolve('./src/app');
-    let entry = [];
+
+    // let entry = [];
+    // fs.readdirSync(appDir).map(subDir => {
+    //     let apps = fs.readdirSync(path.join(appDir, subDir)).filter(file => /^[\s\S]+.route.js$/.test(file)).map(file => path.join(appDir, subDir, file));
+    //     if(apps.length) {
+    //         entry = entry.concat(apps);
+    //     }
+    // });
+
+    // return {
+    //     app: entry
+    // };
+
+    let entry = {};
     fs.readdirSync(appDir).map(subDir => {
         let apps = fs.readdirSync(path.join(appDir, subDir)).filter(file => /^[\s\S]+.route.js$/.test(file)).map(file => path.join(appDir, subDir, file));
         if(apps.length) {
-            entry = entry.concat(apps);
+            entry[subDir] = apps;
         }
     });
 
-    return {
-        app: entry
-    };
+    return entry;
 }
 
 module.exports = (options = {}) => {
@@ -104,14 +115,14 @@ module.exports = (options = {}) => {
             ]
         },
         plugins: [
-            // new webpack.optimize.CommonsChunkPlugin({
-            //     name: 'common',
-            //     minChunks: (module, count) => count >= 2
-            // }),
-            // new webpack.optimize.CommonsChunkPlugin({
-            //     name: 'vendor',
-            //     minChunks: (module) => module.context && module.context.indexOf('node_modules') !== -1
-            // }),
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'common',
+                minChunks: (module, count) => count >= 2
+            }),
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'vendor',
+                minChunks: (module) => module.context && module.context.indexOf('node_modules') !== -1
+            }),
             // new webpack.optimize.CommonsChunkPlugin({
             //     name: 'manifest',
             //     minChunks: Infinity
