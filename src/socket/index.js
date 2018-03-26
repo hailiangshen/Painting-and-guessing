@@ -1,20 +1,19 @@
 import io from "socket.io-client";
-import socketMethods from "src/../config/socketMethods";
+import socketMethods from "../../model/socketMethods";
 import store from "src/store";
 
 class paintingAndGuessingSocket {
     constructor() {
-        let user = JSON.parse(
-            localStorage.getItem("user:sokcet-painting-and-guessing") ||
-                '{"name": "捡了西瓜捡芝麻"}'
-        );
+        let user = (userData => {
+            return userData ? JSON.parse(userData) : {};
+        })(localStorage.getItem("user:sokcet-painting-and-guessing"));
 
         this.socket = io.connect("/painting-and-guessing", {
             forceNew: true,
             query: {
                 token: user.id || "",
-                id: user.id || "",
-                nickName: user.nickName || ""
+                // id: user.id || "",
+                // nickName: user.nickName || ""
             }
         });
 
@@ -56,6 +55,9 @@ class paintingAndGuessingSocket {
     enterRoom({ id }) {
         this.socket.emit(socketMethods.enterRoom, { id });
         this.updateCurrentRoom();
+    }
+    updateUserName(nickName) {
+        this.socket.emit(socketMethods.updateUser, { nickName });
     }
 }
 

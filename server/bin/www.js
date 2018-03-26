@@ -25,7 +25,7 @@ io.use((socket, next) => {
     // return next(new Error("authentication error"));
     next();
 });
-io.of("/painting-and-guessing").on("connection", socketHandler);
+socketHandler.bindTo(io);
 
 console.info(chalk.greenBright(`start listening -> ${port}`));
 

@@ -1,133 +1,62 @@
 // mongodb
 const _ = require("lodash");
-const socketMethods = require("../../config/socketMethods");
+const socketMethods = require("../../model/socketMethods");
 
-class User {
-    constructor(id, socket, name = "anonymous", roomId = null) {
-        this.id = id;
-        this.socket = socket;
-        this.nickName = name;
-        this.roomId = roomId;
-        this._timer = null;
-    }
-    disDestroy() {
-        if (this._timer) {
-            clearTimeout(this._timer);
-            this._timer = null;
-        }
-    }
-    preDestroy() {
-        this.disDestroy();
-        this._timer = setTimeout(() => {
-            this._timer = null;
-            if (this.roomId) {
-                getRoom(this.roomId).removeUser(this);
-            }
-            delete userCache[this.id]; //
-        }, 30 * 60 * 1000);
-    }
-}
+const User = require('../../model/user');
+const Room = require('../../model/room');
 
-class Room {
-    constructor(id, name) {
-        this.id = id;
-        this.name = name;
-        this.users = [];
-        this._timer = null;
-
-        this.preDestroy();
+let generateRoom = ((seed) => {
+    return (roomsSet, name) => {
+        let _room = new Room({id: seed++, name, onDestroy: (room) => {
+            let id = roomsSet.findIndex(x => x.id === room.id);
+            roomsSet.length > 1 && roomsSet.splice(id, 1);
+        }});
+        roomsSet.push(_room);
+        return _room;
     }
-    disDestroy() {
-        if (this._timer) {
-            clearTimeout(this._timer);
-            this._timer = null;
-        }
-    }
-    preDestroy() {
-        this.disDestroy();
-        this._timer = setTimeout(() => {
-            this._timer = null;
-            let id = roomsCache.findIndex(x => x.id === this.id);
-            if (id !== -1) {
-                roomsCache.length > 1 && roomsCache.splice(id, 1); //
-            }
-        }, 60 * 1000);
-    }
-    hasUser(user) {
-        return this.users.some(x => x.id === user.id);
-    }
-    removeUser(user) {
-        let id = this.users.findIndex(x => x.id === user.id);
-        if (id !== -1) {
-            this.users.splice(id, 1);
-            if (!this.users.length) {
-                this.preDestroy();
-            }
-            return 1;
-        }
-        return 0;
-    }
-    addUser(user) {
-        if (this.hasUser(user)) {
-            return 0;
-        }
-        this.users.push(user);
-        this.disDestroy();
-        return 1;
-    }
-}
-
-let generateRoom = (roomsSet, name) => {
-    let id = Math.floor(Math.random() * 10000);
-    let _room = getRoom(id);
-    if (_room) {
-        return generateRoom();
-    } else {
-        _room = new Room(id, name);
-        roomsSet.push(roomsSet);
-    }
-    return _room;
-};
+})(10000);
 
 let getRoom = roomId => {
     return roomsCache.find(x => x.id === roomId);
 };
 
-// 所有需要给前端的room数据都有过滤一次
-let filterRoom = (rooms) => {
-    return ((rooms instanceof Array) ? rooms : [rooms]).map(x => {
-        return {
-            id: x.id,
-            name: x.name,
-            users: x.users.map(u => u.id)
-        };
-    })   
+let userDestory = (user) =>{
+    if (user.roomId) {
+        let room = getRoom(user.roomId);
+        room.removeUser(user, socket);
+        socket.broadcast.to(room.id).emit(socketMethods.getCurrentRoom, {
+            data: room.serializable()
+        });
+    }
+    delete userCache[user.id];
 }
 
 // 这俩对象应该闭包包起来
 let userCache = {},
-    roomsCache = [new Room("asdasdasd", "哎呀一个房间")];
+    roomsCache = [];
 
-let socketHanlder = socket => {
-    let token = socket.handshake.query.id || socket.id;
-    let nickName = socket.handshake.query.nickName || undefined;
-    console.log(token);
+generateRoom(roomsCache, "哎呀一个房间");
+
+let socketHandler = socket => {
+    let token = socket.handshake.query.token || socket.id;
 
     let user = userCache[token]
         ? userCache[token]
-        : (userCache[token] = new User(token, socket, nickName));
-    user.socket = socket;
+        : (userCache[token] = new User({id: token, socket, onDestroy: userDestory}));
+    // user.socket = socket;
 
     socket.emit(socketMethods.updateUser, {
-        data: {
-            id: user.id,
-            nickName: user.nickName
-        }
+        data: user.serializable()
+    });
+
+    socket.on(socketMethods.updateUser, nickName => {
+        user.nickName = nickName;
+        // broadcast
     });
 
     socket.on(socketMethods.getCurrentRoom, () => {
         socket.emit(socketMethods.getCurrentRoom, {
-            data: user.roomId ? filterRoom(getRoom(user.roomId))[0] : null
+            data: user.roomId ? getRoom(user.roomId).serializable() : null
         });
     });
 
@@ -136,7 +65,7 @@ let socketHanlder = socket => {
             end = page.pageIndex * page.pageSize;
         socket.emit(socketMethods.getRooms, {
             // for page load
-            data: filterRoom(roomsCache.slice(start, end))
+            data: roomsCache.slice(start, end).map(x => x.serializable())
         });
     });
 
@@ -146,10 +75,15 @@ let socketHanlder = socket => {
                 if (user.roomId === id) {
                     return;
                 }
-                getRoom(user.roomId).removeUser(user);
+                getRoom(user.roomId).removeUser(user, socket);
             }
-            getRoom(id).addUser(user);
+            let room = getRoom(id);
+            room.addUser(user, socket);
             user.roomId = id;
+
+            socket.broadcast.to(room.id).emit(socketMethods.getCurrentRoom, {
+                data: room.serializable()
+            });
         }
     });
 
@@ -168,4 +102,8 @@ let socketHanlder = socket => {
     });
 };
 
-module.exports = socketHanlder;
+module.exports = {
+    bindTo: io => {
+        io.of('/painting-and-guessing').on("connection", socketHandler);
+    }
+}

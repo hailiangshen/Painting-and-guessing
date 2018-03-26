@@ -10,6 +10,9 @@
                 <span :class="[$style.roomLab, commonStyles.fl]">{{currentRoom.name}}</span>
                 <span :class="[$style.roomLab, commonStyles.fr]">{{currentRoom.users.length}}只瓜娃子</span>
             </div>
+            <div :class="[$style.roomUsers]">
+                <div :class="[$style.user, (user.id === currentUser.id) && $style.isMe]" v-for="user in currentRoom.users">{{user.nickName}}</div>
+            </div>
             <i-button :buttons="startBtns" v-on:click="startClick"></i-button>
         </div>
         <div :class="$style.roomList" v-if="!currentRoom">
@@ -49,8 +52,11 @@ export default {
         currentRoom: function() {
             return this.$store.state.currentRoom;
         },
+        currentUser: function() {
+            return this.$store.state.currentUser || {};
+        },
         nickName: function() {
-            return this.$store.state.currentUser ? this.$store.state.currentUser.nickName: '';
+            return this.currentUser.nickName;
         },
         profilePicture: function() {
             return TextToImageUrl(this.nickName);
@@ -108,5 +114,17 @@ export default {
 }
 .roomList{
     margin-top: 10px;
+}
+.roomUsers{
+    padding: 5px 15px;
+}
+.user{
+    text-align: left;
+    margin: 5px 0;
+}
+.isMe{
+    background-color: rgb(48,205,154);
+    background-size: 40px 40px;
+    background-image: linear-gradient(45deg,rgb(80,212,169) 25%, transparent 0, transparent 50%, rgb(80,212,169) 0,rgb(80,212,169) 75%, transparent 0);
 }
 </style>
